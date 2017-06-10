@@ -19,7 +19,8 @@ class RegisterView(CreateAPIView):
     permission_classes = (AllowAny,)
 
     def create(self, request, *args, **kwargs):
-        data = request.data
+        data = request.data.copy()
+        data['company_id'] = 'stokvel_io'
         RehiveSDK = Rehive()
         response = RehiveSDK.register(data)
         
@@ -36,3 +37,17 @@ class RegisterView(CreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
+
+class LoginView(APIView):
+    permission_classes = (AllowAny,)
+    
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['company_id'] = 'stokvel_io'
+        RehiveSDK = Rehive()
+        response = RehiveSDK.login(data)
+
+        return Response(
+                response,
+                status=status.HTTP_200_OK
+            )

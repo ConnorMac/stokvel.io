@@ -39,7 +39,9 @@ class Stokvel(models.Model):
 class Event(models.Model):
     stokvel = models.ForeignKey(Stokvel)
     user = models.ManyToManyField(User)
+    title = models.CharField(max_length=255, null=True)
     description = models.CharField(max_length=255, null=True)
+    payout = MoneyField(default=Decimal(0))
     created = models.DateTimeField()
     updated = models.DateTimeField()
 
