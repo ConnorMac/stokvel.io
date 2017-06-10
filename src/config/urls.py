@@ -12,7 +12,9 @@ admin.autodiscover()
 
 urlpatterns = (
     # Views
-    url(r'^', include('bitcoin_monitoring.urls', namespace='bitcoin-monitoring')),
+    url(r'^', include('stokvel.urls', namespace='stokvel')),
+    url(r'^$', views.index, name='index'),
+    url(r'^3j40NF5lQC/', include(admin.site.urls)),
 )
 
 # Add debug URL routes

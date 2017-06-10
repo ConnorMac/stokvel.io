@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'storages',
 
-    'bitcoin_monitoring',
+    'stokvel',
 
     'anymail',
     'djcelery_email',
