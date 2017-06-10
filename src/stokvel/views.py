@@ -10,7 +10,8 @@ from stokvel.serializers import RegisterSerializer
 
 from stokvel.rehive.rehive import Rehive
 
-from . import models
+from stokvel.models import User
+from django.utils import timezone
 
 
 class RegisterView(CreateAPIView):
@@ -21,11 +22,12 @@ class RegisterView(CreateAPIView):
         data = request.data
         RehiveSDK = Rehive()
         response = RehiveSDK.register(data)
-    
-        if response['status'] == 201:
-            import pdb; pdb.set_trace()
+        
+        if response['data']['user']['identifier'] is not None:
             user = User(
-                rehive_identifier=response['data']['user']['identifier']
+                rehive_identifier=response['data']['user']['identifier'],
+                created=timezone.now(),
+                updated=timezone.now()
             )
             user.save()
 
