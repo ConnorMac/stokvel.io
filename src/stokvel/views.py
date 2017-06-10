@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from stokvel.serializers import RegisterSerializer
 
 from stokvel.rehive.rehive import Rehive
+from stokvel.authentication import ValidateWithRehive
+from stokvel.permissions import UserPermission
 
 from stokvel.models import User
 from django.utils import timezone
@@ -24,7 +26,7 @@ class RegisterView(CreateAPIView):
         RehiveSDK = Rehive()
         response = RehiveSDK.register(data)
         
-        if response['data']['user']['identifier'] is not None:
+        if response['http_code'] == 201:
             user = User(
                 rehive_identifier=response['data']['user']['identifier'],
                 created=timezone.now(),
@@ -40,7 +42,7 @@ class RegisterView(CreateAPIView):
 
 class LoginView(APIView):
     permission_classes = (AllowAny,)
-    
+
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
         data['company_id'] = 'stokvel_io'
@@ -51,3 +53,14 @@ class LoginView(APIView):
                 response,
                 status=status.HTTP_200_OK
             )
+
+
+class StokvelView(APIView):
+    # serializer_class = CreateDepositTransactionSerializer
+    allowed_methods = ('GET', 'POST')
+    authentication_classes = (ValidateWithRehive,)
+    permission_classes = (UserPermission,)
+
+    def post(self, request, *args, **kwargs):
+        return Response(request.user)
+

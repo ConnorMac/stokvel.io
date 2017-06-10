@@ -92,7 +92,13 @@ class ApiInterface:
         # Check for token in response and set it for the current object
         if (json and 'data' in json and 'token' in json['data']):
             self._set_token = json['data']['token']
-        return json
+        
+        data = {
+            'http_code': result.status_code,
+        }
+        data['data'] = json['data']
+
+        return data
 
     def _set_token(token):
         self.token = token

@@ -2,6 +2,8 @@ from django.db import models
 import datetime
 from decimal import Decimal
 
+from django.contrib.auth.models import User
+
 
 class MoneyField(models.DecimalField):
     """
