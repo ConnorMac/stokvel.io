@@ -2,7 +2,7 @@ import requests
 import json
 
 from rest_framework import authentication, exceptions
-from stokvel.rehive.rehive import Rehive
+from rehive_sdk.rehive import Rehive
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_text
 from stokvel.models import User
@@ -14,9 +14,9 @@ class ValidateWithRehive(authentication.BaseAuthentication):
         try:
             token = self.get_token_value(request)
             RehiveSDK = Rehive(token)
-            response = RehiveSDK.get_current_user()
+            response = RehiveSDK.auth.get_current_user()
 
-            if response['http_code'] == 200:
+            if response:
                 user = response['data']
                 try:
                     stokvel_user = User.objects.get(
@@ -30,8 +30,7 @@ class ValidateWithRehive(authentication.BaseAuthentication):
 
         except Exception as e:
             raise exceptions.AuthenticationFailed('Authentication error.')
-        
-        # stokvel_user.info = True
+
         return user, token
 
     @staticmethod

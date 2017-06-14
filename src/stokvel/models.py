@@ -17,12 +17,19 @@ class MoneyField(models.DecimalField):
 
 
 class User(models.Model):
+    email = models.CharField(max_length=255,
+                             unique=True,
+                             blank=False,
+                             null=False)
     rehive_identifier = models.CharField(max_length=2000,
                                          unique=True,
                                          blank=False,
                                          null=False)
     created = models.DateTimeField()
     updated = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.id)
 
 
 class Stokvel(models.Model):
@@ -33,9 +40,20 @@ class Stokvel(models.Model):
                                          null=False)
     monthly_payment = MoneyField(default=Decimal(0))
     users = models.ManyToManyField(User)
+    title = models.CharField(max_length=255, null=True)
     description = models.CharField(max_length=255, null=True)
     created = models.DateTimeField()
     updated = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:  # On create
+            self.created = datetime.datetime.now()
+
+        self.updated = datetime.datetime.now()
+        return super(Stokvel, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.title
 
 
 class Event(models.Model):
@@ -47,9 +65,23 @@ class Event(models.Model):
     created = models.DateTimeField()
     updated = models.DateTimeField()
 
+    def save(self, *args, **kwargs):
+        if not self.id:  # On create
+            self.created = datetime.datetime.now()
+
+        self.updated = datetime.datetime.now()
+        return super(Event, self).save(*args, **kwargs)
+
 
 class Vote(models.Model):
     stokvel = models.ForeignKey(Stokvel)
     user = models.ForeignKey(User)
     created = models.DateTimeField()
     updated = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:  # On create
+            self.created = datetime.datetime.now()
+
+        self.updated = datetime.datetime.now()
+        return super(Vote, self).save(*args, **kwargs)
