@@ -221,7 +221,8 @@ class RegisterView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['company_id'] = 'stokvel_io'
+        data['company'] = 'stokvel_io'
+
         RehiveSDK = Rehive()
         response = RehiveSDK.auth.register(data)
 
@@ -245,7 +246,7 @@ class LoginView(APIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['company_id'] = 'stokvel_io'
+        data['company'] = 'stokvel_io'
         RehiveSDK = Rehive()
         response = RehiveSDK.auth.login(data)
 
@@ -269,7 +270,7 @@ class StokvelView(ListCreateAPIView):
             'email': 'stokvel+' + str(email_append) + '@rehive.com',
             'first_name': 'stokvel',
             'last_name': 'stokvel',
-            'company_id': 'stokvel_io',
+            'company': 'stokvel_io',
             'password1': 'fT!3<5,n<-<P9d5',
             'password2': 'fT!3<5,n<-<P9d5'
         }
@@ -280,8 +281,7 @@ class StokvelView(ListCreateAPIView):
         request.data['rehive_identifier'] = data.get('user').get('identifier')
         request.data._mutable = mutable
         return super(StokvelView, self).post(request, *args, **kwargs)
-    
+
     def perform_create(self, serializer):
-        import pdb; pdb.set_trace()
-        serializer.save(users=User.objects.filter(id__in=self.request.data['users']))
+        serializer.save(users=User.objects.filter(email__in=self.request.data['users']))
 

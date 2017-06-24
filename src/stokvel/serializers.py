@@ -18,7 +18,12 @@ class RegisterSerializer(serializers.Serializer):
 
 class StokvelSerializer(serializers.ModelSerializer):
     monthly_payment = serializers.CharField(required=True)
-    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    # users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    users = serializers.SlugRelatedField(
+        many=True,
+        queryset=User.objects.all(),
+        slug_field='email'
+     )
     title = serializers.CharField(required=True)
     rehive_identifier = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
@@ -28,4 +33,3 @@ class StokvelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stokvel
         fields = ('monthly_payment', 'title', 'users', 'description', 'created', 'updated', 'rehive_identifier',)
-

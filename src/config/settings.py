@@ -45,8 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.flatpages',
-    'django.contrib.sites',
 
     'corsheaders',
     'rest_framework',
@@ -173,8 +171,6 @@ TEMPLATES = [
 # Other
 # ---------------------------------------------------------------------------------------------------------------------
 VERSION = '1.0.0'
-
-SITE_ID = 1
 
 FIXTURE_DIRS = ['config/fixtures']
 
