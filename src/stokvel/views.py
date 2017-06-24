@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination, CursorPagination
 
-from stokvel.serializers import RegisterSerializer, StokvelSerializer
+from stokvel.serializers import RegisterSerializer, StokvelSerializer, EventSerializer, VoteSerializer
 
 from rehive_sdk.rehive import Rehive
 from stokvel.authentication import ValidateWithRehive
@@ -284,4 +284,16 @@ class StokvelView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(users=User.objects.filter(email__in=self.request.data['users']))
+
+
+class EventView(ListCreateAPIView):
+    authentication_classes = (ValidateWithRehive,)
+    permission_classes = (UserPermission,)
+    serializer_class = EventSerializer
+
+
+class VoteView(ListCreateAPIView):
+    authentication_classes = (ValidateWithRehive,)
+    permission_classes = (UserPermission,)
+    serializer_class = VoteSerializer
 

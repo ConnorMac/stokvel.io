@@ -51,7 +51,7 @@ class Stokvel(models.Model):
 
         self.updated = datetime.datetime.now()
         return super(Stokvel, self).save(*args, **kwargs)
-    
+
     def __str__(self):
         return self.title
 

@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from stokvel.models import Stokvel, User
+from stokvel.models import Stokvel, User, Event, Vote
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -18,7 +18,6 @@ class RegisterSerializer(serializers.Serializer):
 
 class StokvelSerializer(serializers.ModelSerializer):
     monthly_payment = serializers.CharField(required=True)
-    # users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
     users = serializers.SlugRelatedField(
         many=True,
         queryset=User.objects.all(),
@@ -33,3 +32,27 @@ class StokvelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stokvel
         fields = ('monthly_payment', 'title', 'users', 'description', 'created', 'updated', 'rehive_identifier',)
+
+
+class EventSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(read_only=True)
+    created = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Event
+
+    def create(self, validated_data):
+        rehive_user = self.context.get('request').user
+        user = User.objects.filter(rehive_identifier=rehive_user['identifier'])
+        validated_data['user'] = user
+        print(validated_data)
+        return super(EventSerializer, self).create(validated_data)
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    created = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Vote
