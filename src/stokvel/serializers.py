@@ -35,7 +35,7 @@ class StokvelSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(read_only=True)
+    user = serializers.CharField(read_only=True) # TODO: Fix this shit
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
@@ -46,13 +46,19 @@ class EventSerializer(serializers.ModelSerializer):
         rehive_user = self.context.get('request').user
         user = User.objects.filter(rehive_identifier=rehive_user['identifier'])
         validated_data['user'] = user
-        print(validated_data)
         return super(EventSerializer, self).create(validated_data)
 
 
 class VoteSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(read_only=True) # TODO: Fix this shit
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Vote
+
+    def create(self, validated_data):
+        rehive_user = self.context.get('request').user
+        user = User.objects.filter(rehive_identifier=rehive_user['identifier']).get()
+        validated_data['user'] = user
+        return super(VoteSerializer, self).create(validated_data)

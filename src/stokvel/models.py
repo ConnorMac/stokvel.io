@@ -58,7 +58,7 @@ class Stokvel(models.Model):
 
 class Event(models.Model):
     stokvel = models.ForeignKey(Stokvel)
-    user = models.ManyToManyField(User)
+    user = models.ForeignKey(User)
     title = models.CharField(max_length=255, null=True)
     description = models.CharField(max_length=255, null=True)
     payout = MoneyField(default=Decimal(0))
@@ -74,7 +74,7 @@ class Event(models.Model):
 
 
 class Vote(models.Model):
-    stokvel = models.ForeignKey(Stokvel)
+    event = models.ForeignKey(Event)
     user = models.ForeignKey(User)
     created = models.DateTimeField()
     updated = models.DateTimeField()
