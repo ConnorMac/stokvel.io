@@ -7,5 +7,5 @@ urlpatterns = (
     url(r'^stokvel/$', views.StokvelView.as_view(), name='stokvel'),
     # url(r'^stokvel/pay/$', views.PayStokvelView.as_view(), name='pay-stokvel'),
     url(r'^event/$', views.EventView.as_view(), name='event'),
-    url(r'^vote/$', views.VoteView.as_view(), name='vote')
+    url(r'^event/(?P<id>(\w+))/vote/$', views.VoteView.as_view(), name='vote')
 )

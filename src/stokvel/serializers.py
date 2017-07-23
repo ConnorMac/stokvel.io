@@ -38,6 +38,7 @@ class EventSerializer(serializers.ModelSerializer):
     user = serializers.CharField(read_only=True) # TODO: Fix this shit
     created = serializers.DateTimeField(read_only=True)
     updated = serializers.DateTimeField(read_only=True)
+    votes = VoteSerializer(read_only=True, many=True)
 
     class Meta:
         model = Event

@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination, CursorPagination
 
 from stokvel.serializers import RegisterSerializer, StokvelSerializer, EventSerializer, VoteSerializer
 
-from rehive_sdk.rehive import Rehive
+from rehive import Rehive, APIException
 from stokvel.authentication import ValidateWithRehive
 from stokvel.permissions import UserPermission
 
@@ -223,10 +223,9 @@ class RegisterView(CreateAPIView):
         data = request.data.copy()
         data['company'] = 'stokvel_io'
 
-        RehiveSDK = Rehive()
-        response = RehiveSDK.auth.register(data)
-
-        if response:
+        rehive = Rehive()
+        try:
+            response = rehive.auth.register(data)
             user = User(
                 rehive_identifier=response['data']['user']['identifier'],
                 email=response['data']['user']['email'],
@@ -234,6 +233,11 @@ class RegisterView(CreateAPIView):
                 updated=timezone.now()
             )
             user.save()
+        except APIException as e:
+            return Response(
+                e.data,
+                status=e.status
+            )
 
         return Response(
             response,
@@ -263,7 +267,7 @@ class StokvelView(ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         # Disgusting hacks that need to be fixed
-        RehiveSDK = Rehive()
+        rehive = Rehive()
 
         email_append = randint(1, 9999)
         stokvel_user_data = {
@@ -274,13 +278,19 @@ class StokvelView(ListCreateAPIView):
             'password1': 'fT!3<5,n<-<P9d5',
             'password2': 'fT!3<5,n<-<P9d5'
         }
-        response = RehiveSDK.auth.register(stokvel_user_data)
-        data = response.get('data')
-        mutable = request.data._mutable
-        request.data._mutable = True
-        request.data['rehive_identifier'] = data.get('user').get('identifier')
-        request.data._mutable = mutable
-        return super(StokvelView, self).post(request, *args, **kwargs)
+        try:
+            response = rehive.auth.register(stokvel_user_data)
+            data = response.get('data')
+            mutable = request.data._mutable
+            request.data._mutable = True
+            request.data['rehive_identifier'] = data.get('user').get('identifier')
+            request.data._mutable = mutable
+            return super(StokvelView, self).post(request, *args, **kwargs)
+        else APIException as e:
+            return Response(
+                e.data,
+                status=e.status
+            )
 
     def perform_create(self, serializer):
         serializer.save(users=User.objects.filter(email__in=self.request.data['users']))
