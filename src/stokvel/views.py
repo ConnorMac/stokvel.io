@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from rest_framework import status, exceptions
 from rest_framework.exceptions import NotFound
@@ -270,13 +271,14 @@ class StokvelView(ListCreateAPIView):
         rehive = Rehive()
 
         email_append = randint(1, 9999)
+        password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
         stokvel_user_data = {
             'email': 'stokvel+' + str(email_append) + '@rehive.com',
             'first_name': 'stokvel',
             'last_name': 'stokvel',
             'company': 'stokvel_io',
-            'password1': 'fT!3<5,n<-<P9d5',
-            'password2': 'fT!3<5,n<-<P9d5'
+            'password1': password,
+            'password2': password
         }
         try:
             response = rehive.auth.register(stokvel_user_data)
