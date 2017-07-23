@@ -2,7 +2,7 @@ import requests
 import json
 
 from rest_framework import authentication, exceptions
-from rehive_sdk.rehive import Rehive
+from rehive import Rehive
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_text
 from stokvel.models import User

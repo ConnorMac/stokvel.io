@@ -17,7 +17,7 @@ from stokvel.permissions import UserPermission
 from stokvel.models import User, Stokvel
 from django.utils import timezone
 
-from random import randint
+from random import randint, choices
 
 
 class ResultsSetPagination(PageNumberPagination):
@@ -271,7 +271,7 @@ class StokvelView(ListCreateAPIView):
         rehive = Rehive()
 
         email_append = randint(1, 9999)
-        password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        password = ''.join(choices(string.ascii_uppercase + string.digits, k=8))
         stokvel_user_data = {
             'email': 'stokvel+' + str(email_append) + '@rehive.com',
             'first_name': 'stokvel',
@@ -288,7 +288,7 @@ class StokvelView(ListCreateAPIView):
             request.data['rehive_identifier'] = data.get('user').get('identifier')
             request.data._mutable = mutable
             return super(StokvelView, self).post(request, *args, **kwargs)
-        else APIException as e:
+        except APIException as e:
             return Response(
                 e.data,
                 status=e.status
@@ -308,4 +308,3 @@ class VoteView(ListCreateAPIView):
     authentication_classes = (ValidateWithRehive,)
     permission_classes = (UserPermission,)
     serializer_class = VoteSerializer
-
